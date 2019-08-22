@@ -1,52 +1,10 @@
-#include <Windows.h>
 #include "WindowsMessageMap.h"
-
-LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	static WindowsMessageMap mm;
-	OutputDebugString(mm(msg, lParam, wParam).c_str());
-
-	switch (msg)
-	{
-	case WM_CLOSE:
-		PostQuitMessage(69);
-		break;
-	case WM_KEYDOWN:
-		if (wParam == 'F')
-			SetWindowText(hWnd, "Test F PRESSED");
-		break;
-	}
-	return DefWindowProc(hWnd, msg, wParam, lParam);
-}
+#include "Window.h"
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	const auto pClassName = "hw3D";
-	// register window class (Ex version is the new one)
-	WNDCLASSEX wc = { 0 };
-	wc.cbSize = sizeof(wc);
-	wc.style = CS_OWNDC;
-	wc.lpfnWndProc = WndProc;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 0;
-	wc.hInstance = hInstance;
-	wc.hIcon = nullptr;
-	wc.hCursor = nullptr;
-	wc.hbrBackground = nullptr;
-	wc.lpszMenuName = nullptr;
-	wc.lpszClassName = pClassName;
-	wc.hIconSm = nullptr;
-	RegisterClassEx(&wc);
+	Window wnd(800, 300, "Direct3D Engine");
 
-	// create window instance
-	HWND hWnd = CreateWindowEx(0, pClassName,
-		"Direct 3d Engine",
-		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-		200, 200, 640, 480, nullptr, nullptr, hInstance, nullptr);
-
-	// show window
-	ShowWindow(hWnd, SW_SHOW);
-	
 	// message pump
 	MSG msg;
 	BOOL gResult;
@@ -58,6 +16,6 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	if (gResult == -1)
 		return -1;
-	else
-		return msg.wParam;
+
+	return msg.wParam;
 }
