@@ -1,5 +1,6 @@
 #include "WindowsMessageMap.h"
 #include "Window.h"
+#include <sstream>
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -14,9 +15,15 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-			if (wnd.kbd.KeyIsPressed(VK_MENU))
+			while (!wnd.mouse.IsEmpty())
 			{
-				MessageBox(nullptr, "Key event", "you pressed the space bar", 0);
+				const auto e = wnd.mouse.Read();
+				if (e.GetType() == Mouse::Event::Type::Move)
+				{
+					std::ostringstream oss;
+					oss << "Mouse position : (" << e.GetPosX() << ", " << e.GetPosY() << ")";
+					wnd.SetTitle(oss.str());
+				}
 			}
 		}
 
